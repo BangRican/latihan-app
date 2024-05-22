@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RakBukuController;
 use App\Http\Controllers\LoginRegisterController;
-use Illuminate\Http\Request;
-
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostsAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,3 +57,16 @@ Route::controller(LoginRegisterController::class)->group(function() {
 
 // Ajax  Rak Buku
 Route::post('/rak_buku/ajax_store',[RakBukuController::class, 'ajax_store']);
+
+// Posts
+Route::get('posts/login', [PostsAuthController::class, 'showLoginForm'])->name('posts.login');
+Route::post('posts/login', [PostsAuthController::class, 'login'])->name('posts.login.post');
+Route::post('posts/logout', [PostsAuthController::class, 'logout'])->name('posts.logout');
+
+//validasi form create posts
+Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+// Route yang memerlukan autentikasi
+Route::group(['middleware' => 'auth:web'], function() {
+    Route::resource('posts', PostController::class);
+});
